@@ -29,7 +29,7 @@ end
 function update()
 conn=net.createConnection(net.TCP, 0)
     conn:on("connection",function(conn, payload)
-    conn:send("GET /update.html"..
+    conn:send("GET /"..s.path.."/node.php?id="..id.."&update"..
                 " HTTP/1.1\r\n".. 
                 "Host: "..s.domain.."\r\n"..
                 "Accept: */*\r\n"..
@@ -52,6 +52,8 @@ conn=net.createConnection(net.TCP, 0)
     conn:connect(80,s.host)
 end
 
+id = node.chipid()
+print ("nodeID is: "..id)
 
 print(collectgarbage("count").." kB used")
 LoadX()

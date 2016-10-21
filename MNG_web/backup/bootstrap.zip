@@ -1,0 +1,13 @@
+--2015-05-11 13:34:24--  https://github.com/twbs/bootstrap/releases/download/v3.3.4/bootstrap-3.3.4-dist.zip
+Resolving github.com... 192.30.252.128
+Connecting to github.com|192.30.252.128|:443... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: https://s3.amazonaws.com/github-cloud/releases/2126244/0d947776-cbb9-11e4-9286-8685bbbe3465.zip?response-content-disposition=attachment%3B%20filename%3Dbootstrap-3.3.4-dist.zip&response-content-type=application/octet-stream&AWSAccessKeyId=AKIAISTNZFOVBIJMK3TQ&Expires=1431344308&Signature=DEnOUoGyKrfEDyN2YqzagMpofoo%3D [following]
+--2015-05-11 13:34:25--  https://s3.amazonaws.com/github-cloud/releases/2126244/0d947776-cbb9-11e4-9286-8685bbbe3465.zip?response-content-disposition=attachment%3B%20filename%3Dbootstrap-3.3.4-dist.zip&response-content-type=application/octet-stream&AWSAccessKeyId=AKIAISTNZFOVBIJMK3TQ&Expires=1431344308&Signature=DEnOUoGyKrfEDyN2YqzagMpofoo%3D
+Resolving s3.amazonaws.com... 54.231.244.4
+Connecting to s3.amazonaws.com|54.231.244.4|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 261026 (255K) [application/octet-stream]
+0d947776-cbb9-11e4-9286-8685bbbe3465.zip?response-content-disposition=attachment; filename=bootstrap-3.3.4-dist.zip&response-content-type=application%2Foctet-stream&AWSAccessKeyId=AKIAISTNZFOVBIJMK3TQ&Expires=1431344308&Signature=DEnOUoGyKrfEDyN2YqzagMpofoo=: File name too long
+
+Cannot write to `0d947776-cbb9-11e4-9286-8685bbbe3465.zip?response-content-disposition=attachment; filename=bootstrap-3.3.4-dist.zip&response-content-type=application%2Foctet-stream&AWSAccessKeyId=AKIAISTNZFOVBIJMK3TQ&Expires=1431344308&Signature=DEnOUoGyKrfEDyN2YqzagMpofoo=' (Success).

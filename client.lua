@@ -30,7 +30,8 @@ function dwn()
     v = data[n]
     if v == nil then 
         --dofile(data[1]..".lc")
-        s.boot = data[1]..".lc"
+        bootfile= string.gsub(data[1], '\.lua$','') --string.gsub(s, '\....$','')
+        s.boot = bootfile..".lc"
         SaveX("No error")
         node.restart()
 
@@ -38,8 +39,8 @@ function dwn()
         print("Filename: "..v)
         filename=v
 
-            file.remove(v..".lua");
-            file.open(v..".lua", "w+")
+            file.remove(v);
+            file.open(v, "w+")
 
             payloadFound = false
             conn=net.createConnection(net.TCP, false) 
@@ -62,12 +63,15 @@ function dwn()
             conn:on("disconnection", function(conn) 
                 conn = nil
                 file.close()
-                node.compile(filename..".lua")
+                ext = string.sub(v, -3)
+                if (ext == "lua") then
+                    node.compile(filename)
+                end
                 dwn()
 
             end)
             conn:on("connection", function(conn)
-                conn:send("GET /"..v.." HTTP/1.0\r\n"..
+                conn:send("GET /"..s.path.."/uploads/"..id.."/"..v.." HTTP/1.0\r\n"..
                       "Host: "..s.host.."\r\n"..
                       "Connection: close\r\n"..
                       "Accept-Charset: utf-8\r\n"..
@@ -97,8 +101,8 @@ function FileList(sck,c)
         print("Filename: "..v)
         filename=v
         
-            file.remove(v..".lua");
-            file.open(v..".lua", "w+")
+            file.remove(v);
+            file.open(v, "w+")
 
             payloadFound = false
             conn=net.createConnection(net.TCP, false) 
@@ -121,11 +125,14 @@ function FileList(sck,c)
             conn:on("disconnection", function(conn) 
                 conn = nil
                 file.close()
-                node.compile(v..".lua")
+                ext = string.sub(v, -3)
+                if (ext == "lua") then
+                    node.compile(v)
+                end
                 dwn()
             end)
             conn:on("connection", function(conn)
-                conn:send("GET /"..v.." HTTP/1.0\r\n"..
+                conn:send("GET /"..s.path.."/uploads/"..id.."/"..v.." HTTP/1.0\r\n"..
                       "Host: "..s.host.."\r\n"..
                       "Connection: close\r\n"..
                       "Accept-Charset: utf-8\r\n"..
@@ -170,7 +177,7 @@ tmr.alarm (1, 1000, 1, function ( )
     -- get list of files
     sk=net.createConnection(net.TCP, 0)
     sk:on("connection",function(conn, payload)
-                sk:send("GET /".. s.path ..
+                sk:send("GET /".. s.path .."/node.php?id="..id.."&list"..
                 " HTTP/1.1\r\n".. 
                 "Host: "..s.domain.."\r\n"..
                 "Accept: */*\r\n"..
