@@ -26,16 +26,24 @@ If everything is OK you should be able to access management UI http://ip_of_your
 As soon as your webserver is ready. Power on the esp8266. During the first boot process the ESP will show in console its chipid - please copy that. 
 Configure the parameters via web gui and that's it. web GUI is accessible via http://192.168.4.1
 
-parametrs are stored in s.txt
-and it includes
+parametrs are stored in s.txt and it includes
+
 host=   -ip of your webserver
+
 path=   -folder where you place the server php scripts (in my case it's esp folder)
+
 ssid=   -your AP essid
+
 pwd=	-pasword to your wifi
+
 err=	-used for error log
+
 boot=   -define which file must be executed 
+
 domain=	-your webserver domain
+
 update= -define the period of time when the esp will check for new upgrade files (defined in minutes)
+
 
 Sample config (do it via web gui in AP mode)
 host=192.168.0.1
