@@ -3,12 +3,13 @@ function SaveX(sErr)
     if (sErr) then
         s.err = sErr
     end
-    file.remove("s.txt")
-    file.open("s.txt","w+")
+    --file.remove("s.txt")
+    --file.open("s.txt","w+")
     for k, v in pairs(s) do
-        file.writeline(k .. "=" .. v)
-    end                
-    file.close()
+        print(k .. "=" .. v)
+        --file.writeline(k .. "=" .. v)
+    end
+    --file.close()
     collectgarbage()
 end
 
@@ -28,14 +29,14 @@ function dwn()
     -- body
     n = n + 1
     v = data[n]
-    if v == nil then 
+    if v == nil then
         --dofile(data[1]..".lc")
         bootfile= string.gsub(data[1], '\.lua$','') --string.gsub(s, '\....$','')
         s.boot = bootfile..".lc"
         SaveX("No error")
         node.restart()
 
-    else 
+    else
         print("Filename: "..v)
         filename=v
 
@@ -43,7 +44,7 @@ function dwn()
             file.open(v, "w+")
 
             payloadFound = false
-            conn=net.createConnection(net.TCP, false) 
+            conn=net.createConnection(net.TCP, 0)
             conn:on("receive", function(conn, payload)
 
                 if (payloadFound == true) then
@@ -60,7 +61,7 @@ function dwn()
                 payload = nil
                 collectgarbage()
             end)
-            conn:on("disconnection", function(conn) 
+            conn:on("disconnection", function(conn)
                 conn = nil
                 file.close()
                 ext = string.sub(v, -3)
@@ -71,13 +72,15 @@ function dwn()
 
             end)
             conn:on("connection", function(conn)
-                conn:send("GET /"..s.path.."/uploads/"..id.."/"..v.." HTTP/1.0\r\n"..
+                cmd = "GET /"..s.path.."/uploads/"..id.."/"..v.." HTTP/1.0\r\n"..
                       "Host: "..s.host.."\r\n"..
                       "Connection: close\r\n"..
                       "Accept-Charset: utf-8\r\n"..
                       "Accept-Encoding: \r\n"..
-                      "User-Agent: Mozilla/4.0 (compatible; esp8266 Lua; Windows NT 5.1)\r\n".. 
-                      "Accept: */*\r\n\r\n")
+                      "User-Agent: Mozilla/4.0 (compatible; esp8266 Lua; Windows NT 5.1)\r\n"..
+                      "Accept: */*\r\n\r\n"
+                print("Request_HTTP:"..cmd)
+                conn:send(cmd)
             end)
             conn:connect(80,s.host)
     end
@@ -86,6 +89,7 @@ end
 
 function FileList(sck,c)
     print "initialized"
+    print("received: "..c)
     local nStart, nEnd = string.find(c, "\n\n")
     if (nEnde == nil) then
         nStart, nEnd = string.find(c, "\r\n\r\n")
@@ -94,18 +98,18 @@ function FileList(sck,c)
     print("length: "..string.len(c))
 
     data = mysplit(c, "\n") -- fill the field with filenames
-    
+
     --for k,v in pairs(data) do
     n = 1
     v = data[n]
         print("Filename: "..v)
         filename=v
-        
+
             file.remove(v);
             file.open(v, "w+")
 
             payloadFound = false
-            conn=net.createConnection(net.TCP, false) 
+            conn=net.createConnection(net.TCP, 0)
             conn:on("receive", function(conn, payload)
 
                 if (payloadFound == true) then
@@ -122,7 +126,7 @@ function FileList(sck,c)
                 payload = nil
                 collectgarbage()
             end)
-            conn:on("disconnection", function(conn) 
+            conn:on("disconnection", function(conn)
                 conn = nil
                 file.close()
                 ext = string.sub(v, -3)
@@ -132,13 +136,15 @@ function FileList(sck,c)
                 dwn()
             end)
             conn:on("connection", function(conn)
-                conn:send("GET /"..s.path.."/uploads/"..id.."/"..v.." HTTP/1.0\r\n"..
+                cmd = "GET /"..s.path.."/uploads/"..id.."/"..v.." HTTP/1.0\r\n"..
                       "Host: "..s.host.."\r\n"..
                       "Connection: close\r\n"..
                       "Accept-Charset: utf-8\r\n"..
                       "Accept-Encoding: \r\n"..
-                      "User-Agent: Mozilla/4.0 (compatible; esp8266 Lua; Windows NT 5.1)\r\n".. 
-                      "Accept: */*\r\n\r\n")
+                      "User-Agent: Mozilla/4.0 (compatible; esp8266 Lua; Windows NT 5.1)\r\n"..
+                      "Accept: */*\r\n\r\n"
+                print("Request_HTTP:"..cmd)
+                conn:send(cmd)
             end)
             conn:connect(80,s.host)
 
@@ -156,7 +162,15 @@ filename=nil
 LoadX()
 
 wifi.setmode (wifi.STATION)
-wifi.sta.config(s.ssid, s.pwd)
+station_cfg={}
+if  s.ssid ~= nil or s.ssid ~= '' then
+    station_cfg.ssid=s.ssid
+    station_cfg.save=true
+end
+if  s.pwd ~= nil or s.pwd ~= '' then
+    station_cfg.pwd=s.pwd
+end
+wifi.sta.config(station_cfg)
 wifi.sta.autoconnect (1)
 
 iFail = 20 -- trying to connect to AP in 20sec, if not then reboot
@@ -166,8 +180,8 @@ tmr.alarm (1, 1000, 1, function ( )
   if (iFail == 0) then
     SaveX("could not access "..s.ssid)
     node.restart()
-  end      
-  
+  end
+
 
   if wifi.sta.getip ( ) == nil then
     print(s.ssid..": "..iFail)
@@ -176,22 +190,24 @@ tmr.alarm (1, 1000, 1, function ( )
     tmr.stop (1)
     -- get list of files
     sk=net.createConnection(net.TCP, 0)
+    cmd = "GET /".. s.path .."/node.php?id="..id.."&list"..
+        " HTTP/1.1\r\n"..
+        "Host: "..s.domain.."\r\n"..
+        "Accept: */*\r\n"..
+        "User-Agent: Mozilla/4.0 (compatible; esp8266 Lua;)"..
+        "\r\n\r\n"
+    print("Request_HTTP:"..cmd)
     sk:on("connection",function(conn, payload)
-                sk:send("GET /".. s.path .."/node.php?id="..id.."&list"..
-                " HTTP/1.1\r\n".. 
-                "Host: "..s.domain.."\r\n"..
-                "Accept: */*\r\n"..
-                "User-Agent: Mozilla/4.0 (compatible; esp8266 Lua;)"..
-                "\r\n\r\n") 
+                sk:send(cmd)
             end)
     sk:on("receive", FileList)
-    
+
     --sGet = "GET /".. s.path .. " HTTP/1.1\r\nHost: " .. s.domain .. "\r\nConnection: keep-alive\r\nAccept: */*\r\n\r\n"
-    sk:connect(80,s.host) 
-    
+    sk:connect(80,s.host)
+
   end
   collectgarbage()
- 
+
 end)
 
 
