@@ -3,7 +3,7 @@ function SaveX(sErr)
     if (sErr) then
         s.err = sErr
     end
-    --file.remove("s.txt")
+    -- file.remove("s.txt")
     --file.open("s.txt","w+")
     for k, v in pairs(s) do
         print(k .. "=" .. v)
@@ -19,8 +19,12 @@ function mysplit(inputstr, sep)
         end
         local t={} ; i=1
         for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
-                t[i] = str
-                i = i + 1
+                -- Forces the files to contain a dot in the name.
+                if string.match(str, "%.") then
+                    t[i] = str
+                    print("Split"..i..'->'..str)
+                    i = i + 1
+                end
         end
         return t
 end
@@ -89,7 +93,6 @@ end
 
 function FileList(sck,c)
     print "initialized"
-    print("received: "..c)
     local nStart, nEnd = string.find(c, "\n\n")
     if (nEnde == nil) then
         nStart, nEnd = string.find(c, "\r\n\r\n")
