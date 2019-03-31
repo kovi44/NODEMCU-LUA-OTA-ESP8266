@@ -58,6 +58,12 @@ print ("nodeID is: "..id)
 print(collectgarbage("count").." kB used")
 LoadX()
 
+function dofile(filename)
+    local f = assert(loadfile(filename))
+    return f()
+end
+
+
 if (s.host~="") then
 --if (s.host and s.domain and s.path) then
     if (tonumber(s.update)>0) then
@@ -67,7 +73,12 @@ if (s.host~="") then
             end)
     end
     if (s.boot~="") then
-        dofile(s.boot)
+        local success, err = pcall(dofile, s.boot)
+        if success then
+            print("Loaded "..s.boot)
+        else
+            print("Failed to load ".. s.boot.." err:"..err)
+        end
     else
         dofile("client.lua")
     end
