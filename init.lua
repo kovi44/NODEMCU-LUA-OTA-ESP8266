@@ -2,7 +2,7 @@ function LoadX()
     s = {ssid="", pwd="", host="", domain="", path="", err="",boot="",update=0}
     if (file.open("s.txt","r")) then
         local sF = file.read()
-        print("setting: "..sF)
+        -- print("setting: "..sF)
         file.close()
         for k, v in string.gmatch(sF, "([%w.]+)=([%S ]+)") do
             s[k] = v
@@ -61,7 +61,7 @@ LoadX()
 if (s.host~="") then
 --if (s.host and s.domain and s.path) then
     if (tonumber(s.update)>0) then
-        tmr.alarm (0, tonumber(s.update)*60000, 1, function()
+        tmr.create():alarm (tonumber(s.update)*60000, tmr.ALARM_SINGLE, function()
                 print("checking for update")
                 update()
             end)
