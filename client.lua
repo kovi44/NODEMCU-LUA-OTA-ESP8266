@@ -5,6 +5,7 @@ function SaveX(sErr)
     end
     file.remove("s.txt")
     file.open("s.txt","w+")
+    print("Saving new config:")
     for k, v in pairs(s) do
         print(k .. "=" .. v)
         file.writeline(k .. "=" .. v)
@@ -109,51 +110,51 @@ function FileList(sck,c)
     n = 1
     v = data[n]
     if v == nil then Reboot("No file to download") end
-    print("Filename: "..v)
-    filename=v
+        print("Filename: "..v)
+        filename=v
 
-        file.remove(v);
-        file.open(v, "w+")
+            file.remove(v);
+            file.open(v, "w+")
 
-        payloadFound = false
-        conn=net.createConnection(net.TCP, 0)
-        conn:on("receive", function(conn, payload)
+            payloadFound = false
+            conn=net.createConnection(net.TCP, 0)
+            conn:on("receive", function(conn, payload)
 
-            if (payloadFound == true) then
-                file.write(payload)
-                file.flush()
-            else
-                if (string.find(payload,"\r\n\r\n") ~= nil) then
-                    file.write(string.sub(payload,string.find(payload,"\r\n\r\n") + 4))
+                if (payloadFound == true) then
+                    file.write(payload)
                     file.flush()
-                    payloadFound = true
+                else
+                    if (string.find(payload,"\r\n\r\n") ~= nil) then
+                        file.write(string.sub(payload,string.find(payload,"\r\n\r\n") + 4))
+                        file.flush()
+                        payloadFound = true
+                    end
                 end
-            end
 
-            payload = nil
-            collectgarbage()
-        end)
-        conn:on("disconnection", function(conn)
-            conn = nil
-            file.close()
-            ext = string.sub(v, -3)
-            if (ext == "lua") then
-                node.compile(v)
-            end
-            dwn()
-        end)
-        conn:on("connection", function(conn)
-            cmd = "GET /"..s.path.."/uploads/"..id.."/"..v.." HTTP/1.0\r\n"..
-                  "Host: "..s.host.."\r\n"..
-                  "Connection: close\r\n"..
-                  "Accept-Charset: utf-8\r\n"..
-                  "Accept-Encoding: \r\n"..
-                  "User-Agent: Mozilla/4.0 (compatible; esp8266 Lua; Windows NT 5.1)\r\n"..
-                  "Accept: */*\r\n\r\n"
-            print("Request_HTTP:"..cmd)
-            conn:send(cmd)
-        end)
-        conn:connect(80,s.host)
+                payload = nil
+                collectgarbage()
+            end)
+            conn:on("disconnection", function(conn)
+                conn = nil
+                file.close()
+                ext = string.sub(v, -3)
+                if (ext == "lua") then
+                    node.compile(v)
+                end
+                dwn()
+            end)
+            conn:on("connection", function(conn)
+                cmd = "GET /"..s.path.."/uploads/"..id.."/"..v.." HTTP/1.0\r\n"..
+                      "Host: "..s.host.."\r\n"..
+                      "Connection: close\r\n"..
+                      "Accept-Charset: utf-8\r\n"..
+                      "Accept-Encoding: \r\n"..
+                      "User-Agent: Mozilla/4.0 (compatible; esp8266 Lua; Windows NT 5.1)\r\n"..
+                      "Accept: */*\r\n\r\n"
+                print("Request_HTTP:"..cmd)
+                conn:send(cmd)
+            end)
+            conn:connect(80,s.host)
 
     --end
     collectgarbage()

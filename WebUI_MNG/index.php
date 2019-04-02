@@ -35,7 +35,7 @@ if(isset($_POST) and $_SERVER['REQUEST_METHOD'] == "POST"){
       $sth = $db->prepare($sql);
       $sth->execute();
       $result = $sth->fetch(PDO::FETCH_ASSOC);
-	 var_dump($result);
+
       $r_folder = $result['folder'];
       $r_filename = $result['filename'];
 
