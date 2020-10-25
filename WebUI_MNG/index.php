@@ -7,16 +7,13 @@ $max_file_size = 1024*100; //100 kb
 $path = "uploads/"; // Upload directory
 $count = 0;
 if(isset($_GET) and $_SERVER['REQUEST_METHOD'] == "GET"){
-
-  $nodeIdDel = $_GET['del'];
-  
   if (isset($_GET['del'])) {
+    $nodeIdDel = $_GET['del'];
     $sql = "DELETE FROM esp WHERE id=$nodeIdDel";
     $db->exec($sql);
   }
-  $nodeIdUpd = $_GET['upd'];
-  
   if (isset($_GET['upd'])) {
+    $nodeIdUpd = $_GET['upd'];
     $sql = "SELECT * FROM esp WHERE id=$nodeIdUpd";
     $sth = $db->prepare($sql);
     $sth->execute();
@@ -27,7 +24,6 @@ if(isset($_GET) and $_SERVER['REQUEST_METHOD'] == "GET"){
     $sql = "UPDATE esp SET `update`='$val' WHERE id=$nodeIdUpd";
     $db->exec($sql);
   }
-
 }
 
 if(isset($_POST) and $_SERVER['REQUEST_METHOD'] == "POST"){
@@ -40,8 +36,8 @@ if(isset($_POST) and $_SERVER['REQUEST_METHOD'] == "POST"){
       $sth->execute();
       $result = $sth->fetch(PDO::FETCH_ASSOC);
 
-      $r_folder = $result[folder];
-      $r_filename = $result[filename];
+      $r_folder = $result['folder'];
+      $r_filename = $result['filename'];
 
       $fn = "uploads/".$r_folder."/".$r_filename;
       $file = fopen($fn, "w"); 

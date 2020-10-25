@@ -3,8 +3,9 @@ function SaveX(vars)
     file.remove("s.txt")
     file.open("s.txt","w+")
     for k, v in pairs(s) do
+        print("Saving Config:"..k .. "=" .. v)
         file.writeline(k .. "=" .. v)
-    end                
+    end
     file.close()
     collectgarbage()
     node.restart()
